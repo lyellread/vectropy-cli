@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 ####################################
-#Python Vectors in the Command Line#
+# Python Vector Manipulation Shell #
 #      Lyell Read | 6/15/2018      #
 ####################################
 
@@ -18,6 +18,10 @@ class VecPrompt (Cmd):
 			print(args)
 		print("Hello, %s" %name)
 
+	def do_calculation(self,args):
+		arglist=args.split()
+		print (arglist)
+
 	def do_quit(self, args):
 		"""Quits the program... Duh"""
 		print ("Quitting")
@@ -28,3 +32,4 @@ if __name__ == "__main__":
 	prompt = VecPrompt()
 	prompt.prompt = 'V&> '
 	prompt.cmdloop('Starting prompt...')
+
