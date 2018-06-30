@@ -9,7 +9,7 @@ from cmd import Cmd
 import math
 
 version = "1.0.0"
-data_file = "data.txt"
+data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
 
@@ -25,7 +25,8 @@ class VecPrompt (Cmd):
 			type = arglist[0]
 			arglist.remove(arglist[0])
 			arglist_float = [float(arg) for arg in arglist]
-
+			save_data = open(data_file, w)
+			
 			for pair in range (0,len(arglist_float)/2):
 				pair_vec = arglist_float [0:2]
 				if type == 'xy':
@@ -50,7 +51,6 @@ class VecPrompt (Cmd):
 			return return_pair
 		else:
 			print("-err->Unknown Type; Error; Breaking")
-
 
 
 	def do_quit(self, args):
