@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 
-#full verbosity, man on all commds input check for spaces, too Permanently, broken remove
+#full verbosity
+#man on all commds with same style menu (\n<topic menu>\n========\n... ... ...\n)
+#input check for spaces
+#broken remove
 
 ####################################
 # Python Vector Manipulation Shell #
@@ -10,7 +13,7 @@
 from cmd import Cmd
 import math
 
-version = "1.0.1"
+version = "1.0.2"
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
@@ -77,42 +80,52 @@ class VecPrompt (Cmd):
 			print ("-----> [" + str(line_num) + "] : " + str(source_data[line_num].split()[0]) + ", " + str(source_data[line_num].split()[1]))
 
 	def do_remove (self, args):
+		# define help menu. ~pretty standard, really~
 		"""  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3 ...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally."""
 		data = open(data_file, "r+")
 		source_data = data.readlines()
 
+		#Build Data Validation list to check input against.
 		data_validation = []
 		for line in range (0,len(source_data)):
 			data_validation.append(str(line))
 		print("-----> Acceptable input will be checked against " + str(data_validation))
+
+		# if there are no args, then the user is using remove() to remove their choice, thus input needed.
 		if len(args) == 0:
-			VecPrompt.do_print(self,0)
+			VecPrompt.do_print(self,0) #Print out all the vectors in storage
+			#Build an argument list from the input of the user
 			arglist = raw_input("-----> Choose which to remove. Split with spaces: ").split(" ")
 			for arg in arglist:
 				print("-----> Checking arg " + str(arg))
 				if not arg in data_validation:
 					print ("-err-> Validation failed on item " + arg + " breaking, nothing removed.")
 					return 0
+					#Break if the arg check failsself.
+			#Otherwise, if the arglist completes, set it to be the definitive one
 			args = arglist
 		else:
+			#This case is where another fxn called remove() and we're just getting the args from that
 			args=args.split(" ")
 
+		#Reverse sort that list of args to take the largest first (thus it will not change the pos of the next item to be removed...)_
 		args.sort(key=int, reverse=True)
 
 		print("-----> Passed with arglist " + str(args))
 
 		remove_list = []
+		data.close()
+
 		for arg in args:
 			remove_list.append(source_data[int(arg)])
 
-		for line in source_data:
-			if line in remove_list:
-				source_data.remove(line)
-		data.close()
-		data = open(data_file, "w")
-		for line in source_data:
-			data.write(line)
-		data.close()
+			for line in source_data:
+				if line in remove_list:
+					source_data.remove(line)
+					data = open(data_file, "w")
+					for line in source_data:
+						data.write(line)
+					data.close()
 
 
 ## Math Tools ##
