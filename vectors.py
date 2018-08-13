@@ -12,7 +12,7 @@
 from cmd import Cmd
 import math
 
-version = "1.0.3"
+version = "1.1.0"
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
@@ -83,7 +83,7 @@ class VecPrompt (Cmd):
 
 	def do_remove (self, args):
 		# define help menu. ~pretty standard, really~
-		"""\n  Remove Help Entry\n  =================\n  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally.\n         If mutiple identical vectors exist and you choose to remove one, it will get all of 'em'\n"""
+		"""\n  Remove Help Entry\n  =================\n  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally.\n"""
 
 		data = open(data_file, "r+")
 		source_data = data.readlines()
@@ -124,10 +124,61 @@ class VecPrompt (Cmd):
 					for line in source_data:
 						data.write(line)
 					data.close()
+					break
 		print("-----> Remove Finished!")
 
 
 ## Math Tools ##
+
+
+	def do_add (self,args):
+		"""\n  Add Help Menu\n  =============\n  Func.: Adds n vectors together\n  Usage: + add [store output? (Y|N)] [remove inputs? (Y|N)] n1 n2 ... \n  Notes: To get the same function as subtract, inverse, then add.\n         Store Output: Y: adds new vector for resultant; N: Prints the resultant, does not save.\n         Remove Inputs: Y: removes all input vectors (n1, n2 ...); N: Does not touch input Vectors.\n"""
+
+		args=args.split(" ")
+
+		if len(args)<4:
+			print("-err-> Too few arguments entered. Please retry. Breaking!")
+			return 0
+
+		if args[0].upper() not in ('Y','N') or args[1].upper() not in ('Y','N'):
+			print("-err-> Invalid arguments parsed (first two need to be 'Y' or 'N')")
+			return 0
+
+		#Build Data Validation list to check input against.
+		data = open(data_file, "r+")
+		source_data = data.readlines()
+
+		data_validation = []
+		for line in range (0,len(source_data)):
+			data_validation.append(str(line))
+
+		inputs = []
+
+		for arg in args[2:len(args)]:
+			if not arg in data_validation:
+				print ("-err-> Invalid vector index entered: " + arg)
+				return 0
+			else:
+				inputs.append(source_data[int(arg)].split())
+
+		final_x = 0
+		final_y = 0
+
+		for vector in inputs:
+			final_x += float(vector[0])
+			final_y += float(vector[1])
+
+		print("-res-> Resultant: X: " + str(final_x) + "; Y: " + str(final_y))
+
+		if args[0].upper() == "Y":
+			VecPrompt.do_input(self, "xy " + str(final_x) + " " + str(final_y))
+
+		if args[1].upper() == "Y":
+			for arg in args[2:len(args)]:
+				VecPrompt.do_remove(self,arg)
+
+		print("-----> Add Finished!")
+
 
 
 	def do_inverse (self, args):
@@ -162,6 +213,7 @@ class VecPrompt (Cmd):
 				inversed_vec.append(-1 * float(component))
 			VecPrompt.do_input(self,"xy " + str(inversed_vec[0]) + " " + str(inversed_vec[1]))
 		print ("-----> Inverse Finished")
+
 
 ## Exiting Tools ##
 
