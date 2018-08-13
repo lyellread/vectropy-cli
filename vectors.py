@@ -21,7 +21,7 @@ class VecPrompt (Cmd):
 ## Basic Manipulation Tools ##
 
 	def do_input(self,args):
-		"""  Func.: Lets you input vector(s) in x- and y- components, mangitude and angle (deg | rad) into the program\n  Usage: + input (xy | deg | rad) (x1 y1 x2 y2 ... | mag1 deg1 mag2 deg2 ... | mag1 rad1 mag2 rad2 ...) \n  Notes: Input checked for even number of args.\n         Enter 0 instead of leaving an entry blank."""
+		"""\n  Input Help Entry\n  ================\n  Func.: Lets you input vector(s) in x- and y- components, mangitude and angle (deg | rad) into the program\n  Usage: + input (xy | deg | rad) (x1 y1 x2 y2 ... | mag1 deg1 mag2 deg2 ... | mag1 rad1 mag2 rad2 ...) \n  Notes: Input checked for even number of args.\n         Enter 0 instead of leaving an entry blank.\n"""
 		print("-----> Started!")
 		output=open(data_file, "a+")
 		if len(args) == 0 or not (len(args.split(" "))-1)%2 == 0 or not args.split(" ")[0] in ['xy','deg','rad']:
@@ -62,7 +62,7 @@ class VecPrompt (Cmd):
 			print("-err-> Unknown Type; Error; Breaking")
 
 	def do_clear (self, args):
-		"""  Func.: Clears stored vectors\n  Usage: + clear\n  Notes: Clears all vectors. Permanently ;)"""
+		"""\n  Clear Help Entry\n  ================\n  Func.: Clears stored vectors\n  Usage: + clear\n  Notes: Clears all vectors. Permanently ;)\n"""
 		VecPrompt.do_print(self,0)
 		#Verify Certainty!
 		verify = raw_input("-ver-> Are you sure you want to clear vectors printed above? (y/n):")
@@ -74,6 +74,7 @@ class VecPrompt (Cmd):
 			print ("-----> Not clearing file. Finished.")
 
 	def do_print (self, args):
+		"""\n  Print Help Entry\n  ================\n  Func.: Prints all vectors in storage.\n  Usage: + print\n  Notes: None, sorry!\n"""
 		source=open(data_file, "r")
 		source_data = source.readlines()
 		for line_num in range (0,len(source_data)):
@@ -81,7 +82,7 @@ class VecPrompt (Cmd):
 
 	def do_remove (self, args):
 		# define help menu. ~pretty standard, really~
-		"""  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3 ...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally."""
+		"""\n  Remove Help Entry\n  =================\n  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3 ...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally.\n"""
 		data = open(data_file, "r+")
 		source_data = data.readlines()
 
@@ -131,7 +132,7 @@ class VecPrompt (Cmd):
 ## Math Tools ##
 
 	def do_inverse (self, args):
-		"""  Func.: Takes the inverse of a vector. This is the equivalent of rotating the vector by 180 degrees.\n  Usage: + inverse\n  Notes: none"""
+		"""\n  Inverse Help Entry\n  ==================\n  Func.: Takes the inverse of a vector. This is the equivalent of rotating the vector by 180 degrees.\n  Usage: + inverse\n  Notes: none\n"""
 		if len(args) == 0:
 			VecPrompt.do_print(self,0)
 			inverses = raw_input("-----> Enter all you wish to flip, separated by spaces: ").split(' ')
@@ -163,12 +164,12 @@ class VecPrompt (Cmd):
 ## Exiting Tools ##
 
 	def do_quit(self, args):
-		"""  Func.: Quits the program\n  Usage: + quit \n  Notes: No arguments needed\n         Same as `exit`"""
+		"""\n  Quit Help Entry\n  ===============\n  Func.: Quits the program\n  Usage: + quit \n  Notes: No arguments needed\n         Same as `exit`/n"""
 		print ("Quitting Immediately")
 		raise SystemExit
 
 	def do_exit(self, args):
-		"""  Func.: Quits the program\n  Usage: + exit \n  Notes: No arguments needed\n         Same as `quit`"""
+		"""\n  Exit Help Entry\n  ===============\n  Func.: Quits the program\n  Usage: + exit \n  Notes: No arguments needed\n         Same as `quit`\n"""
 		print ("Quitting Immediately")
 		raise SystemExit
 if __name__ == "__main__":
