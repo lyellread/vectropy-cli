@@ -1,9 +1,8 @@
 #! /usr/bin/env python
 
 #full verbosity
-#man on all commds with same style menu (\n<topic menu>\n========\n... ... ...\n)
 #input check for spaces
-#broken remove
+#Maths
 
 ####################################
 # Python Vector Manipulation Shell #
@@ -23,9 +22,11 @@ class VecPrompt (Cmd):
 	def do_input(self,args):
 		"""\n  Input Help Entry\n  ================\n  Func.: Lets you input vector(s) in x- and y- components, mangitude and angle (deg | rad) into the program\n  Usage: + input (xy | deg | rad) (x1 y1 x2 y2 ... | mag1 deg1 mag2 deg2 ... | mag1 rad1 mag2 rad2 ...) \n  Notes: Input checked for even number of args.\n         Enter 0 instead of leaving an entry blank.\n"""
 		print("-----> Started!")
+
 		output=open(data_file, "a+")
 		if len(args) == 0 or not (len(args.split(" "))-1)%2 == 0 or not args.split(" ")[0] in ['xy','deg','rad']:
 			print("-err-> Too few or offset args or improper type")
+			return 0
 		else:
 			print("-----> Passed with arglist: " + args)
 
@@ -82,7 +83,7 @@ class VecPrompt (Cmd):
 
 	def do_remove (self, args):
 		# define help menu. ~pretty standard, really~
-		"""\n  Remove Help Entry\n  =================\n  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3 ...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally.\n"""
+		"""\n  Remove Help Entry\n  =================\n  Func.: Removes a vector from storage.\n  Usage: + remove [n1 n2 n3 ...]\n  Notes: If you do not specify line numbers (n1 n2 ...) you can choose interacively\n         The line number input starts at line 0 and specifying the lines as parameters is used internally.\n         If mutiple identical vectors exist and you choose to remove one, it will get all of 'em'\n"""
 		data = open(data_file, "r+")
 		source_data = data.readlines()
 
@@ -100,7 +101,7 @@ class VecPrompt (Cmd):
 			for arg in arglist:
 				print("-----> Checking arg " + str(arg))
 				if not arg in data_validation:
-					print ("-err-> Validation failed on item " + arg + " breaking, nothing removed.")
+					print ("-err-> Validation failed on user entered argument: " + arg + ". Breaking, nothing removed.")
 					return 0
 					#Break if the arg check failsself.
 			#Otherwise, if the arglist completes, set it to be the definitive one
@@ -149,7 +150,7 @@ class VecPrompt (Cmd):
 		for arg in inverses:
 			print("-----> Checking argument " + arg)
 			if not arg in data_validation:
-				print ("-err-> Input out of range. Nothing inversed. Breaking!")
+				print ("-err-> Input out of range or invalid. Nothing inversed. Breaking!")
 				return 0
 
 		for x in range (0,len(inverses)):
