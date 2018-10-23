@@ -12,7 +12,7 @@
 from cmd import Cmd
 import math
 
-version = "1.1.0"
+version = "2.0.1" #testing 3d branch
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
