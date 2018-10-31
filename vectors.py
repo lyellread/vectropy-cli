@@ -22,9 +22,19 @@ class VecPrompt (Cmd):
 
 
 	def do_input(self,args):
-		"""\n  Input Help Entry\n  ================\n  Func.: Lets you input vector(s) in x- and y- components, mangitude and angle (deg | rad) into the program\n  Usage: + input (xy | deg | rad) (x1 y1 x2 y2 ... | mag1 deg1 mag2 deg2 ... | mag1 rad1 mag2 rad2 ...) \n  Notes: Input checked for even number of args.\n         Enter 0 instead of leaving an entry blank.\n"""
-
+		"""\n  Input Help Entry\n  ================\n  Func.: Lets you input vector(s) into the program\n  Usage: + input xyz x1 y1 z1 x2 y2 z2 ...\n        + input deg mag1 amgle1 mag2 angle2\n         + input rad mag1 angle1 mag2 angle2\n  Notes: Input checked for appropriate number of arguments, add a 0 for z in xyz to have 2d vectors.\n         Enter 0 instead of leaving an entry blank.\n"""
 		output=open(data_file, "a+")
+		if len(args) in range (0,3):
+			print ("-err-> Too few arguments provided.")
+			return 0
+
+		if args[0] not in ['xyz','deg','rad']:
+			print ("-err-> Improper type entered.")
+			return 0
+
+		print (args)
+
+		#if args[0] == 'xyz':
 		if len(args) == 0 or not (len(args.split(" "))-1)%2 == 0 or not args.split(" ")[0] in ['xy','deg','rad']:
 			print("-err-> Too few or offset args or improper type")
 			return 0
