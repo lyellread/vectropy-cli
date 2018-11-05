@@ -12,7 +12,7 @@
 from cmd import Cmd
 import math
 
-version = "2.0.2" #testing 3d branch
+version = "2.0.3" #testing 3d branch
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
@@ -48,7 +48,7 @@ class VecPrompt (Cmd):
 		arguments_float = [float(arg) for arg in arguments]
 
 		if type != "xyz":
-			for pair in range (0,len(arguments_float)/2):
+			for pair in range (0,len(arguments_float) // 2):
 				pair_vec = arguments_float [0:2]
 				print("-----> Converting vector to XYZ format")
 				#print ("-----> Converting Vector with Magintude " + str(pair_vec[0]) + " and angle " + str(pair_vec[1]) + " " + type)
@@ -63,9 +63,9 @@ class VecPrompt (Cmd):
 			output.close()
 
 		else: #xyz
-			for trio in range (0,len(arguments_float)/3):
+			for trio in range (0,len(list(arguments_float)) // 3):
 				trio=arguments_float[0:3]
-				print ("-----> Adding Vector with X component " + str(trio[0]) + " and Y component " + str(trio[1]) + " and Z component " + str(trio[2]))
+				#print ("-----> Adding Vector with X component " + str(trio[0]) + " and Y component " + str(trio[1]) + " and Z component " + str(trio[2]))
 				output.write(str(trio[0]) + " " + str(trio[1]) + " " + str(trio[2]) + "\n")
 				arguments_float=arguments_float[3:]
 
@@ -179,22 +179,28 @@ class VecPrompt (Cmd):
 
 		inputs = []
 
-		for arg in args[2:len(args)]:
+		numeric_arguments=args[2:]
+		numeric_arguments.sort(key=int, reverse=True)
+
+		for arg in numeric_arguments:
 			if not arg in data_validation:
 				print ("-err-> Invalid vector index entered: " + arg)
 				return 0
 			else:
 				inputs.append(source_data[int(arg)].split())
 
+
 		final_x = 0
 		final_y = 0
 		final_z = 0
 
 		#here I could see doing something with sets, tuples or list additions
+		print ("Using Vector: ")
+		print (	inputs)
 		for vector in inputs:
 			final_x += float(vector[0])
 			final_y += float(vector[1])
-			final_y += float(vector[2])
+			final_z += float(vector[2])
 
 		print("-res-> Resultant: X: " + str(final_x) + "; Y: " + str(final_y)+ "; Z: " + str(final_z))
 
@@ -202,7 +208,7 @@ class VecPrompt (Cmd):
 			VecPrompt.do_input(self, "xyz " + str(final_x) + " " + str(final_y) + " " + str(final_z))
 
 		if args[1].upper() == "Y": # Remove the input vectors
-			for arg in args[2:len(args)]:
+			for arg in numeric_arguments:
 				VecPrompt.do_remove(self,arg)
 
 		print("-----> Add Function Finished!")
@@ -217,6 +223,8 @@ class VecPrompt (Cmd):
 			inverses = input("-----> Enter all you wish to flip, separated by spaces: ").split(' ')
 		else:
 			inverses=args.split(" ")
+
+		inverses.sort(key=int, reverse=True)
 
 		data = open(data_file, "r+")
 		source_data = data.readlines()
