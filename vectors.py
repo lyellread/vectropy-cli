@@ -12,7 +12,7 @@
 from cmd import Cmd
 import math
 
-version = "2.0.1" #testing 3d branch
+version = "2.0.2" #testing 3d branch
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
@@ -23,40 +23,52 @@ class VecPrompt (Cmd):
 
 	def do_input(self,args):
 		"""\n  Input Help Entry\n  ================\n  Func.: Lets you input vector(s) into the program\n  Usage: + input xyz x1 y1 z1 x2 y2 z2 ...\n        + input deg mag1 amgle1 mag2 angle2\n         + input rad mag1 angle1 mag2 angle2\n  Notes: Input checked for appropriate number of arguments, add a 0 for z in xyz to have 2d vectors.\n         Enter 0 instead of leaving an entry blank.\n"""
+
 		output=open(data_file, "a+")
-		if len(args) in range (0,3):
+		arguments = args.split(" ")
+
+		if len(aruments) < 3: # 0,1,2
 			print ("-err-> Too few arguments provided.")
 			return 0
 
-		if args[0] not in ['xyz','deg','rad']:
+		if arguments[0] not in ['xyz','deg','rad']:
 			print ("-err-> Improper type entered.")
 			return 0
 
-		print (args)
-
-		#if args[0] == 'xyz':
-		if len(args) == 0 or not (len(args.split(" "))-1)%2 == 0 or not args.split(" ")[0] in ['xy','deg','rad']:
-			print("-err-> Too few or offset args or improper type")
+		if arguments[0] in ['deg','rad'] and not (len(arguments)-1)%2 == 0: #checks for odd number of arguments if we are working with DEG or RAD
+			print("-err-> Wrong amount of arguments for selected mode.")
 			return 0
-		else:
-			arglist=args.split(" ")
-			type = arglist[0]
-			arglist.remove(arglist[0])
-			arglist_float = [float(arg) for arg in arglist]
-			for pair in range (0,len(arglist_float)/2):
-				pair_vec = arglist_float [0:2]
-				if type != 'xy':
-					print("-----> Converting both vectors to XY format")
-					#print ("-----> Converting Vector with Magintude " + str(pair_vec[0]) + " and angle " + str(pair_vec[1]) + " " + type)
-					pair_vec= VecPrompt.convert_to_xy(self, pair_vec, type)
+
+		if arguments[0] == 'xyz' and not (len(arguments)-1)%3 == 0: #checks for multiple of three number of arguments if we are working with XYZ
+			print("-err-> Wrong amount of arguments for selected mode.")
+			return 0
+
+		type = arguments[0]
+		arguments.remove(arguments[0])
+		arguments_float = [float(arg) for arg in arguments]
+
+		if type != "xyz":
+			for pair in range (0,len(arguments_float)/2):
+				pair_vec = arguments_float [0:2]
+				print("-----> Converting vector to XYZ format")
+				#print ("-----> Converting Vector with Magintude " + str(pair_vec[0]) + " and angle " + str(pair_vec[1]) + " " + type)
+				pair_vec= VecPrompt.convert_to_xy(self, pair_vec, type)
 				#print ("-----> Adding Vector with X component " + str(pair_vec[0]) + " and Y component " + str(pair_vec[1]))
 
 				#Write to File
-				output.write(str(pair_vec[0]) + " " + str(pair_vec[1])+"\n")
-				arglist_float=[arg for arg in arglist_float[2:]]
+				output.write(str(pair_vec[0]) + " " + str(pair_vec[1])+" 0\n") #" 0" at the end is to set a zero valued Z component - the only one possible with the available info.
+				arguments_float=arguments_float[2:] #redefine the arguments to be all but the first two, repeat.
 
-		print ("-----> Input Finished!")
-		output.close()
+			print ("-----> Input Finished!")
+			output.close()
+
+		else: #xyz
+			for trio in range (0,len(arguments_float)/3):
+				trio=arguments_float[0:3]
+				print ("-----> Adding Vector with X component " + str(trio[0]) + " and Y component " + str(trio[1]) + " and Z component " + str(trio[2]))
+				output.write(str(trio[0]) + " " + str(trio[1]) + " " + str(trio[2]) + "\n")
+				arguments_float=arguments_float[3]:]
+
 
 	def convert_to_xy (self, pair, type):
 		if not len(pair) == 2:
@@ -75,7 +87,7 @@ class VecPrompt (Cmd):
 		"""\n  Clear Help Entry\n  ================\n  Func.: Clears stored vectors\n  Usage: + clear\n  Notes: Clears all vectors. Permanently ;)\n"""
 
 		VecPrompt.do_print(self,0)
-		#Verify Certainty!
+		#Verify User Certainty!
 		verify = raw_input("-ver-> Are you sure you want to clear vectors printed above? (y/n):")
 		if verify.lower() == "y":
 			print("-----> Clearing file: " + str(data_file))
@@ -89,7 +101,7 @@ class VecPrompt (Cmd):
 		source=open(data_file, "r")
 		source_data = source.readlines()
 		for line_num in range (0,len(source_data)):
-			print ("-----> [" + str(line_num) + "] : " + str(source_data[line_num].split()[0]) + ", " + str(source_data[line_num].split()[1]))
+			print ("-----> [" + str(line_num) + "] : " + str(source_data[line_num].split()[0]) + ", " + str(source_data[line_num].split()[1]) + ", " str(source_data[line_num].split()[2]))
 
 	def do_remove (self, args):
 		# define help menu. ~pretty standard, really~
@@ -98,27 +110,30 @@ class VecPrompt (Cmd):
 		data = open(data_file, "r+")
 		source_data = data.readlines()
 
-		#Build Data Validation list to check input against.
+		#Build Data Validation list to check input against. TODO: Use list comp to make neat!
 		data_validation = []
 		for line in range (0,len(source_data)):
 			data_validation.append(str(line))
+
 		# if there are no args, then the user is using remove() to remove their choice, thus input needed.
 		if len(args) == 0:
 			VecPrompt.do_print(self,0) #Print out all the vectors in storage
+
 			#Build an argument list from the input of the user
-			arglist = raw_input("-----> Choose which to remove. Split with spaces: ").split(" ")
-			for arg in arglist:
+			arguments = raw_input("-----> Choose which to remove. Split with spaces: ").split(" ")
+			for arg in arguments:
 				if not arg in data_validation:
 					print ("-err-> Validation failed on user-entered argument: " + arg + " --> Breaking, nothing removed.")
-					return 0
-					#Break if the arg check failsself.
-			#Otherwise, if the arglist completes, set it to be the definitive one
-			args = arglist
+					return 0 #Break if the arg check failsself.
+
+			#Otherwise, if the arguments completes, set it to be the definitive one
+			args = arguments
+
 		else:
-			#This case is where another fxn called remove() and we're just getting the args from that
+			#This case is where another fxn called remove() and we're just getting the args from that - we trust that function to be 'spot on chaps.'
 			args=args.split(" ")
 
-		#Reverse sort that list of args to take the largest first (thus it will not change the pos of the next item to be removed...)_
+		#Reverse sort that list of args to take the largest first (thus it will not change the pos of the next item to be removed...) (guess who got to find that out the hard way xD)
 		args.sort(key=int, reverse=True)
 
 		remove_list = []
@@ -173,28 +188,31 @@ class VecPrompt (Cmd):
 
 		final_x = 0
 		final_y = 0
+		final_z = 0
 
+		#here I could see doing something with sets, tuples or list additions
 		for vector in inputs:
 			final_x += float(vector[0])
 			final_y += float(vector[1])
+			final_y += float(vector[2])
 
-		print("-res-> Resultant: X: " + str(final_x) + "; Y: " + str(final_y))
+		print("-res-> Resultant: X: " + str(final_x) + "; Y: " + str(final_y)+ "; Z: " + str(final_z))
 
-		if args[0].upper() == "Y":
-			VecPrompt.do_input(self, "xy " + str(final_x) + " " + str(final_y))
+		if args[0].upper() == "Y": # Store the output to file, using the already defined input function
+			VecPrompt.do_input(self, "xyz " + str(final_x) + " " + str(final_y) + " " + str(final_z))
 
-		if args[1].upper() == "Y":
+		if args[1].upper() == "Y": # Remove the input vectors
 			for arg in args[2:len(args)]:
 				VecPrompt.do_remove(self,arg)
 
-		print("-----> Add Finished!")
+		print("-----> Add Function Finished!")
 
 
 
 	def do_inverse (self, args):
-		"""\n  Inverse Help Entry\n  ==================\n  Func.: Takes the inverse of a vector. This is the equivalent of rotating the vector by 180 degrees.\n  Usage: + inverse\n  Notes: none\n"""
+		"""\n  Inverse Help Entry\n  ==================\n  Func.: Takes the inverse of a vector. This is the equivalent of creating a new vector with an equal magnitude and opposite direction to the first vector.\n  Usage: + inverse\n  Notes: none\n"""
 
-		if len(args) == 0:
+		if len(args) == 0: # using it in interactive mode, inversing user supplied vectors.
 			VecPrompt.do_print(self,0)
 			inverses = raw_input("-----> Enter all you wish to flip, separated by spaces: ").split(' ')
 		else:
@@ -221,7 +239,7 @@ class VecPrompt (Cmd):
 			inversed_vec =[]
 			for component in temp_vec.split(" "):
 				inversed_vec.append(-1 * float(component))
-			VecPrompt.do_input(self,"xy " + str(inversed_vec[0]) + " " + str(inversed_vec[1]))
+			VecPrompt.do_input(self,"xyz " + str(inversed_vec[0]) + " " + str(inversed_vec[1])+ " " + str(inversed_vec[2]))
 		print ("-----> Inverse Finished")
 
 
