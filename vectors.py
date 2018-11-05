@@ -27,7 +27,7 @@ class VecPrompt (Cmd):
 		output=open(data_file, "a+")
 		arguments = args.split(" ")
 
-		if len(aruments) < 3: # 0,1,2
+		if len(arguments) < 3: # 0,1,2
 			print ("-err-> Too few arguments provided.")
 			return 0
 
@@ -67,7 +67,7 @@ class VecPrompt (Cmd):
 				trio=arguments_float[0:3]
 				print ("-----> Adding Vector with X component " + str(trio[0]) + " and Y component " + str(trio[1]) + " and Z component " + str(trio[2]))
 				output.write(str(trio[0]) + " " + str(trio[1]) + " " + str(trio[2]) + "\n")
-				arguments_float=arguments_float[3]:]
+				arguments_float=arguments_float[3:]
 
 
 	def convert_to_xy (self, pair, type):
@@ -88,7 +88,7 @@ class VecPrompt (Cmd):
 
 		VecPrompt.do_print(self,0)
 		#Verify User Certainty!
-		verify = raw_input("-ver-> Are you sure you want to clear vectors printed above? (y/n):")
+		verify = input("-ver-> Are you sure you want to clear vectors printed above? (y/n):")
 		if verify.lower() == "y":
 			print("-----> Clearing file: " + str(data_file))
 			open(data_file, 'w').close() # clears file
@@ -101,7 +101,7 @@ class VecPrompt (Cmd):
 		source=open(data_file, "r")
 		source_data = source.readlines()
 		for line_num in range (0,len(source_data)):
-			print ("-----> [" + str(line_num) + "] : " + str(source_data[line_num].split()[0]) + ", " + str(source_data[line_num].split()[1]) + ", " str(source_data[line_num].split()[2]))
+			print ("-----> [" + str(line_num) + "] : " + str(source_data[line_num].split()[0]) + ", " + str(source_data[line_num].split()[1]) + ", " + str(source_data[line_num].split()[2]))
 
 	def do_remove (self, args):
 		# define help menu. ~pretty standard, really~
@@ -120,7 +120,7 @@ class VecPrompt (Cmd):
 			VecPrompt.do_print(self,0) #Print out all the vectors in storage
 
 			#Build an argument list from the input of the user
-			arguments = raw_input("-----> Choose which to remove. Split with spaces: ").split(" ")
+			arguments = input("-----> Choose which to remove. Split with spaces: ").split(" ")
 			for arg in arguments:
 				if not arg in data_validation:
 					print ("-err-> Validation failed on user-entered argument: " + arg + " --> Breaking, nothing removed.")
@@ -214,7 +214,7 @@ class VecPrompt (Cmd):
 
 		if len(args) == 0: # using it in interactive mode, inversing user supplied vectors.
 			VecPrompt.do_print(self,0)
-			inverses = raw_input("-----> Enter all you wish to flip, separated by spaces: ").split(' ')
+			inverses = input("-----> Enter all you wish to flip, separated by spaces: ").split(' ')
 		else:
 			inverses=args.split(" ")
 
