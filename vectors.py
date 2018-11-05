@@ -249,9 +249,9 @@ class VecPrompt (Cmd):
 		print ("-----> Inverse Finished")
 
 	def do_dot (self, args):
-		"""\n  Dot Help Entry\n  ==================\n  Func.: Computes the dot product of two vectors. Choose between either VAL to just print out the dot product, or VEC to store the resultant vector. \n  Usage: + dot (vec|val) n1 n2\n  Notes: none\n"""
+		"""\n  Dot Help Entry\n  ==================\n  Func.: Computes the dot product of two vectors. Choose between either VAL to just print out (x1*x2 + y1*y2 + z1*z2), or VEC to store <x1*x2, y1*y2, z1*z2>. \n  Usage: + dot (vec|val) n1 n2\n  Notes: none\n"""
 
-		if len(args) != 3:
+		if len(args.split()) != 3:
 			print ("-err-> Wrong number of arguments provided. Required:3 (see help)")
 			return 0
 
@@ -262,10 +262,33 @@ class VecPrompt (Cmd):
 			print ("-err-> Please make the first value be either 'val' or 'vec'.")
 			return 0
 
+		data = open(data_file, "r+")
+		source_data = data.readlines()
 
+		data_validation = []
+		for line in range (0,len(source_data)):
+			data_validation.append(str(line))
+
+		for arg in args[1:]:
+			if not arg in data_validation:
+				print ("-err-> Input out of range or invalid. Nothing inversed. Breaking!")
+				return 0
+
+		v1=[float(component) for component in source_data[int(args[1])].split(" ")]
+		v2=[float(component) for component in source_data[int(args[2])].split(" ")]
+
+		print("Vector 1:" + str(v1) + "; Vector 2:" + str(v2))
 
 		if args[0] in ('val','value'):
+			value = sum([v1[n] * v2[n] for n in range (0, len(v1))])
+			print ("-----> The Value of " + str(v1) + " and " + str(v2) + " is: " + str(value))
 
+		else:
+			resultant = [v1[n] * v2[n] for n in range (0, len(v1))]
+			print("-res-> Resultant Vector: " + str(resultant) + ". Saving to file...")
+			VecPrompt.do_input(self, ("xyz " + str(resultant[0]) + " " + str(resultant[1]) + " " + str(resultant[2])))
+
+		print ("-----> Dot Product Function Finished.")
 
 ## Exiting Tools ##
 
