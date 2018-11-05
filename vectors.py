@@ -2,7 +2,8 @@
 
 #full verbosity
 #input check for spaces
-#Maths
+#make an input check function
+#Complete dot, add crossself.
 
 ####################################
 # Python Vector Manipulation Shell #
@@ -12,7 +13,7 @@
 from cmd import Cmd
 import math
 
-version = "2.0.3" #testing 3d branch
+version = "2.1.0" #testing 3d branch
 data_file = "data.txt" #replace with path to file if it is somewhere else...
 
 class VecPrompt (Cmd):
@@ -68,7 +69,6 @@ class VecPrompt (Cmd):
 				#print ("-----> Adding Vector with X component " + str(trio[0]) + " and Y component " + str(trio[1]) + " and Z component " + str(trio[2]))
 				output.write(str(trio[0]) + " " + str(trio[1]) + " " + str(trio[2]) + "\n")
 				arguments_float=arguments_float[3:]
-
 
 	def convert_to_xy (self, pair, type):
 		if not len(pair) == 2:
@@ -213,8 +213,6 @@ class VecPrompt (Cmd):
 
 		print("-----> Add Function Finished!")
 
-
-
 	def do_inverse (self, args):
 		"""\n  Inverse Help Entry\n  ==================\n  Func.: Takes the inverse of a vector. This is the equivalent of creating a new vector with an equal magnitude and opposite direction to the first vector.\n  Usage: + inverse\n  Notes: none\n"""
 
@@ -249,6 +247,24 @@ class VecPrompt (Cmd):
 				inversed_vec.append(-1 * float(component))
 			VecPrompt.do_input(self,"xyz " + str(inversed_vec[0]) + " " + str(inversed_vec[1])+ " " + str(inversed_vec[2]))
 		print ("-----> Inverse Finished")
+
+	def do_dot (self, args):
+		"""\n  Dot Help Entry\n  ==================\n  Func.: Computes the dot product of two vectors. Choose between either VAL to just print out the dot product, or VEC to store the resultant vector. \n  Usage: + dot (vec|val) n1 n2\n  Notes: none\n"""
+
+		if len(args) != 3:
+			print ("-err-> Wrong number of arguments provided. Required:3 (see help)")
+			return 0
+
+		args=args.split()
+		print (args)
+
+		if not args[0] in ('val', 'value', 'vec', 'vector'):
+			print ("-err-> Please make the first value be either 'val' or 'vec'.")
+			return 0
+
+
+
+		if args[0] in ('val','value'):
 
 
 ## Exiting Tools ##
